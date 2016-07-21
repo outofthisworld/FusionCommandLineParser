@@ -98,18 +98,16 @@ public final class AndroidSdkUtils {
                         || path.contains(ANDROID_TOOLS_DIRECTORY))).findFirst();
 
         String finalDir;
-        if(androidSdkDir.isPresent()){
-            String dir = androidSdkDir.get();
-            finalDir = dir.substring(0, dir.endsWith(FILE_SEPARATOR)?
-                    dir.lastIndexOf(FILE_SEPARATOR):dir.length());
-        }else{
-            String loc = System.getenv(ANDROID_SDK_ENV_VARIABLE);
-            finalDir = loc.substring(0,loc.endsWith(FILE_SEPARATOR)?
-                    loc.lastIndexOf(FILE_SEPARATOR):loc.length());
-        }
 
-        if(!isValidSdkLocation(finalDir))
-            return null;
+        if(androidSdkDir.isPresent())
+            finalDir = androidSdkDir.get();
+        else
+            finalDir = System.getenv(ANDROID_SDK_ENV_VARIABLE);
+
+        if(isValidSdkLocation(finalDir)){
+            finalDir = finalDir.substring(0,finalDir.endsWith(FILE_SEPARATOR)?
+                    finalDir.lastIndexOf(FILE_SEPARATOR):finalDir.length());
+        }
 
         return finalDir;
     }

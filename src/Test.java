@@ -1,4 +1,5 @@
 import org.appleby.commandlineparser.parser.CommandLineParserError;
+import util.AndroidSdkUtils;
 
 /**
  * Created by Dale on 21/07/16.
@@ -9,6 +10,8 @@ public class Test {
 
         System.getenv().entrySet().forEach(e -> System.out.println(e.getKey() + " " + e.getValue()));
         FusionCommandLineParser appCommandLineParser = FusionCommandLineParser.parser();
+
+        System.out.println(AndroidSdkUtils.tryLocateAndroidSDK());
         try {
             appCommandLineParser.parseCommandLine(args);
         } catch (CommandLineParserError commandLineParserError) {
