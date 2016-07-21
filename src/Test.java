@@ -6,6 +6,8 @@ import org.appleby.commandlineparser.parser.CommandLineParserError;
 public class Test {
 
     public static void main(String[] args) {
+
+        System.getenv().entrySet().forEach(e -> System.out.println(e.getKey() + " " + e.getValue()));
         FusionCommandLineParser appCommandLineParser = FusionCommandLineParser.parser();
         try {
             appCommandLineParser.parseCommandLine(args);
