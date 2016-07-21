@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="CommandLineTool">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../CommandLineTool/out/artifacts/CommandLineTool_jar/CommandLineTool.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
