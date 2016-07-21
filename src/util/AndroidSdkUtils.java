@@ -1,9 +1,6 @@
 package util;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,39 +23,42 @@ public final class AndroidSdkUtils {
     public static final String ANDROID_TOOL = "android";
     public static final String ADB_TOOL = "adb";
     public static final String ANDROID_SDK_ENV_VARIABLE = "ANDROID_SDK_DIR";
-    public static final String LOG_FILE = "/AndroidSdkTools.txt";
+    public static final String LOG_FILE = "/AndroidSdkTools";
 
     public static final String CREATE_AVD = "create avd";
 
     public static boolean createAVD(String sdkLocation, String name, String target, String abi) throws IOException {
 
-        StringBuilder commandBuilder = new StringBuilder();
+        Process process = Runtime.getRuntime().exec(buildCommand(sdkLocation, name, target, abi));
 
-        commandBuilder.append(sdkLocation)
-                .append(FILE_SEPARATOR)
-                .append(ANDROID_TOOLS_DIRECTORY)
-                .append(FILE_SEPARATOR)
-                .append(ANDROID_TOOL)
-                .append(" -s ")
-                .append(CREATE_AVD)
-                .append(" --name ").append(name)
-                .append(" --target ").append(target)
-                .append(" --abi ").append(abi);
+        FileWriter bos = new FileWriter(AndroidSdkUtils.class.getResource(LOG_FILE).getPath());
 
-        Process process = Runtime.getRuntime().exec(commandBuilder.toString());
-
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(
-                new File(AndroidSdkUtils.class.getResource(LOG_FILE).getPath())));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
 
         int data;
+        int data2;
 
+        InputStream in = process.getInputStream();
+        InputStream in2 = process.getErrorStream();
         try {
-            while ((data = process.getInputStream().read()) != -1) {
+            while ((data = in.read()) != -1) {
                 System.out.print((char)data);
                 bos.write(data);
+
+                if(in2 != null) {
+                    if ((data2 = in2.read()) != -1)
+                        bos.write(data2);
+
+                    if (data2 != -1 && data == -1) {
+                        in = in2;
+                        in2 = null;
+                    }
+                }
             }
-            process.getOutputStream().write("no^M\r".getBytes());
-            process.getOutputStream().flush();
+            writer.write("no");
+            writer.newLine();
+            writer.flush();
+            writer.close();
         }catch (Exception e){
             e.printStackTrace();
             throw e;
@@ -68,18 +68,31 @@ public final class AndroidSdkUtils {
             process.getErrorStream().close();
             process.getInputStream().close();
             process.getOutputStream().close();
-
-            int exitValue = process.exitValue();
-            System.out.println(commandBuilder.toString());
             try {
                 process.waitFor(2000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            int exitValue = process.exitValue();
             process.destroy();
 
             return exitValue == 0;
         }
+    }
+
+    private static final String buildCommand(String sdkLocation, String name,String target,String abi){
+        StringBuilder commandBuilder = new StringBuilder();
+
+        return commandBuilder.append(sdkLocation)
+                .append(FILE_SEPARATOR)
+                .append(ANDROID_TOOLS_DIRECTORY)
+                .append(FILE_SEPARATOR)
+                .append(ANDROID_TOOL)
+                .append(" -s ")
+                .append(CREATE_AVD)
+                .append(" --name ").append(name)
+                .append(" --target ").append(target)
+                .append(" --abi ").append(abi).toString();
     }
 
     public static void createAVD(String name, String target, String abi) throws Exception {
