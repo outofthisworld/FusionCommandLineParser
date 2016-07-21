@@ -16,16 +16,21 @@ public class AndroidEmulator {
     private static final String ANDROID_PLATFORM_TOOLS_DIRECTORY = "platform-tools";
     private static final String ANDROID_TOOLS_DIRECTORY = "tools";
     private static final String EMULATOR_TOOL = "emulator";
-    private static final String AVD_TOOL = "am";
+    private static final String ADB_TOOL = "adb";
     private static final String ANDROID_SDK_ENVIROMENTAL_VARIABLE = "ANDROID_SDK_DIR";
 
+    private final String androidSdkLocation;
 
-    public AndroidEmulator(String sdkLocation){
-
+    
+    public AndroidEmulator(String sdkLocation) throws EmulatorException {
+        if(!isValidSdkLocation(sdkLocation)){
+            throw new EmulatorException("Invalid SDK location");
+        }
+        this.androidSdkLocation = sdkLocation;
     }
 
     public AndroidEmulator() throws EmulatorException {
-        tryLocateAndroidSDK();
+        this.androidSdkLocation = tryLocateAndroidSDK();
     }
 
     public void start(){
@@ -44,6 +49,16 @@ public class AndroidEmulator {
         return false;
     }
 
+    private boolean isValidSdkLocation(String finalDir){
+        Path toolsPath = Paths.get(finalDir + GlobalConstants.FILE_SEPARATOR +
+                ANDROID_TOOLS_DIRECTORY + GlobalConstants.FILE_SEPARATOR + EMULATOR_TOOL);
+
+        Path platformToolsPath = Paths.get(finalDir + GlobalConstants.FILE_SEPARATOR +
+                ANDROID_PLATFORM_TOOLS_DIRECTORY + GlobalConstants.FILE_SEPARATOR + ADB_TOOL);
+
+        return finalDir != null && Files.exists(toolsPath) && Files.exists(platformToolsPath);
+    }
+
     protected final String tryLocateAndroidSDK() throws EmulatorException{
         Optional<String> androidSdkDir =  Stream.of(GlobalConstants.separatedSystemPath())
                 .filter(path->path.contains(ANDROID_DIRECTORY)
@@ -58,13 +73,7 @@ public class AndroidEmulator {
             finalDir = System.getenv(ANDROID_SDK_ENVIROMENTAL_VARIABLE);
         }
 
-        Path toolsPath = Paths.get(finalDir + GlobalConstants.FILE_SEPARATOR +
-                ANDROID_TOOLS_DIRECTORY + GlobalConstants.FILE_SEPARATOR + EMULATOR_TOOL);
-
-        Path platformToolsPath = Paths.get(finalDir + GlobalConstants.FILE_SEPARATOR +
-                ANDROID_PLATFORM_TOOLS_DIRECTORY + GlobalConstants.FILE_SEPARATOR + AVD_TOOL);
-
-        if(finalDir == null || !Files.exists(toolsPath) || !Files.exists(platformToolsPath))
+        if(!isValidSdkLocation(finalDir))
             throw new EmulatorException("Could not located android SDK");
 
         return finalDir;
