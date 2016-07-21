@@ -51,6 +51,13 @@ public final class GlobalConstants {
         return SYSTEM_PATH != null ? SYSTEM_PATH : EMPTY_STRING;
     }
 
+    public static String[] separatedSystemPath(){
+        if(systemPath().isEmpty())
+            return null;
+
+        return systemPath().split(PATH_SERARATOR);
+    }
+
     public static final class OS {
 
         private static final String OS_NAME;
