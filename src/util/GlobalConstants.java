@@ -13,16 +13,25 @@ public final class GlobalConstants {
 
     /* Os specific line separator E.G '\n' */
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     /* Os specific character used to separate file paths E.G ':' || ';' */
     public static final String PATH_SERARATOR = File.pathSeparator;
+
     /* Os specific character used to separate directories & files E.G '/' || '\' */
     public static final String FILE_SEPARATOR = File.separator;
+
+    /* The empty string character */
     public static final String EMPTY_STRING = "";
+
+    /* The null terminating char */
     public static final char NULL_CHAR = '\0';
+
     /* Path to the users home directory */
     private static final String USER_HOME = System.getProperty("user.home");
+
     /* The SHELL environmental variable, if it is set */
     private static final String SYSTEM_SHELL = System.getenv("SHELL");
+
     /* The system PATH variable */
     private static final String SYSTEM_PATH = System.getenv("PATH");
 
