@@ -1,3 +1,5 @@
+package Utils;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -8,42 +10,16 @@ import java.util.stream.Stream;
  */
 public class OS {
 
-    public enum OSFamily{
-        FAMILY_WINDOWS("windows"),
-        FAMILY_9X("win9x"),
-        FAMILY_DOS("dos"),
-        FAMILY_MAC("mac"),
-        FAMILY_NETWARE("netware"),
-        FAMILY_NT("winnt"),
-        FAMILY_OS2("os/2"),
-        FAMILY_OS400("os/400"),
-        FAMILY_TANDEM("tandem"),
-        FAMILY_UNIX("unix"),
-        FAMILY_VMS("openvms"),
-        FAMILY_ZOS("z/os"),
-        FAMILY_DARWIN("darwin"),
-        FAMILY_NOT_SUPPORTED("");
-
-        public final String family;
-
-        OSFamily(String name){
-            this.family = name;
-        }
-    }
-
-
     private static final String OS_NAME;
     private static final String OS_ARCH;
     private static final String OS_VERS;
     private static volatile OSFamily osFamily = null;
-
 
     static{
         OS_NAME = System.getProperty("os.name");
         OS_ARCH = System.getProperty("os.arch");
         OS_VERS = System.getProperty("os.vers");
     }
-
 
     public static boolean isOS(String name, String arch, String vers){
         Objects.requireNonNull(name);
@@ -136,5 +112,28 @@ public class OS {
                 break;
         }
         return osFamily;
+    }
+
+    public enum OSFamily {
+        FAMILY_WINDOWS("windows"),
+        FAMILY_9X("win9x"),
+        FAMILY_DOS("dos"),
+        FAMILY_MAC("mac"),
+        FAMILY_NETWARE("netware"),
+        FAMILY_NT("winnt"),
+        FAMILY_OS2("os/2"),
+        FAMILY_OS400("os/400"),
+        FAMILY_TANDEM("tandem"),
+        FAMILY_UNIX("unix"),
+        FAMILY_VMS("openvms"),
+        FAMILY_ZOS("z/os"),
+        FAMILY_DARWIN("darwin"),
+        FAMILY_NOT_SUPPORTED("");
+
+        public final String family;
+
+        OSFamily(String name) {
+            this.family = name;
+        }
     }
 }

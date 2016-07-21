@@ -16,7 +16,8 @@ import java.util.Set;
 /**
  * Created by Dale on 20/07/16.
  */
-public class AppCommandLineParser extends CommandLineParser<ICommand<Option>> {
+public final class AppCommandLineParser extends CommandLineParser<ICommand<Option>> {
+    private static final AppCommandLineParser parser = new AppCommandLineParser();
     private final HashMap<String, ICommand<Option>> commands = new HashMap<String, ICommand<Option>>() {
         {
             try {
@@ -31,6 +32,13 @@ public class AppCommandLineParser extends CommandLineParser<ICommand<Option>> {
 
     {
         commands.values().forEach(this::addCommand);
+    }
+
+    private AppCommandLineParser() {
+    }
+
+    public static final AppCommandLineParser parser() {
+        return parser;
     }
 
     private class DownloadCommand extends Command<Option> implements OptionArgumentValidator {
@@ -75,7 +83,7 @@ public class AppCommandLineParser extends CommandLineParser<ICommand<Option>> {
         public HelpCommand() throws InvalidArgumentException {
             super("help", "-");
             addOption(new Option("display", "Help", false, true))
-                    .addOption(new Option("show", "Show command help", true, true));
+                    .addOption(new Option("show", "Shows help information about a command", true, true));
         }
 
         @Override
@@ -95,7 +103,7 @@ public class AppCommandLineParser extends CommandLineParser<ICommand<Option>> {
             }
 
             if (optArgs.containsKey("-show"))
-                System.out.println(commands.get("-show").getUsage());
+                System.out.println(commands.get(optArgs.get("-show")).getUsage());
 
 
             return true;
