@@ -11,7 +11,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static util.GlobalConstants.*;
+import static util.GlobalConstants.FILE_SEPARATOR;
+import static util.GlobalConstants.separatedSystemPath;
 
 /**
  * Created by Dale on 21/07/16.
@@ -25,18 +26,24 @@ public final class AndroidSdkUtils {
     public static final String ANDROID_TOOL = "android";
     public static final String ADB_TOOL = "adb";
     public static final String ANDROID_SDK_ENV_VARIABLE = "ANDROID_SDK_DIR";
-    public static final String LOG_FILE = "AndroidSdkTools.txt";
+    public static final String LOG_FILE = "/AndroidSdkTools.txt";
 
-    public static boolean createAVD(String sdkLocation, String name, String target) throws IOException {
+    public static final String CREATE_AVD = "create avd";
+
+    public static boolean createAVD(String sdkLocation, String name, String target, String abi) throws IOException {
 
         StringBuilder commandBuilder = new StringBuilder();
 
         commandBuilder.append(sdkLocation)
                 .append(FILE_SEPARATOR)
+                .append(ANDROID_TOOLS_DIRECTORY)
+                .append(FILE_SEPARATOR)
                 .append(ANDROID_TOOL)
-                .append(SPACE).append("-s ")
-                .append("-n ").append(name)
-                .append("-t ").append(target);
+                .append(" -s ")
+                .append(CREATE_AVD)
+                .append(" --name ").append(name)
+                .append(" --target ").append(target)
+                .append(" --abi ").append(abi);
 
         Process process = Runtime.getRuntime().exec(commandBuilder.toString());
 
@@ -46,9 +53,12 @@ public final class AndroidSdkUtils {
         int data;
 
         try {
-            while ((data = process.getErrorStream().read()) != -1) {
+            while ((data = process.getInputStream().read()) != -1) {
+                System.out.print((char)data);
                 bos.write(data);
             }
+            process.getOutputStream().write("no^M\r".getBytes());
+            process.getOutputStream().flush();
         }catch (Exception e){
             e.printStackTrace();
             throw e;
@@ -56,8 +66,11 @@ public final class AndroidSdkUtils {
             bos.flush();
             bos.close();
             process.getErrorStream().close();
+            process.getInputStream().close();
+            process.getOutputStream().close();
 
             int exitValue = process.exitValue();
+            System.out.println(commandBuilder.toString());
             try {
                 process.waitFor(2000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
@@ -69,12 +82,12 @@ public final class AndroidSdkUtils {
         }
     }
 
-    public static void createAVD(String name, String target) throws Exception {
+    public static void createAVD(String name, String target, String abi) throws Exception {
         String androidSdkLocation;
         if((androidSdkLocation = tryLocateAndroidSDK()) == null)
             throw new Exception("Cannot locate android sdk to create android virtual device");
 
-        createAVD(androidSdkLocation,name,target);
+        createAVD(androidSdkLocation,name,target,abi);
     }
 
     public static boolean isValidSdkLocation(String path){
