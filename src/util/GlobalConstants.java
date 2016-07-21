@@ -23,6 +23,8 @@ public final class GlobalConstants {
     /* The empty string character */
     public static final String EMPTY_STRING = "";
 
+    public static final String SPACE = " ";
+
     /* The null terminating char */
     public static final char NULL_CHAR = '\0';
 
