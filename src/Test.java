@@ -6,7 +6,7 @@ import org.appleby.commandlineparser.parser.CommandLineParserError;
 public class Test {
 
     public static void main(String[] args) {
-        AppCommandLineParser appCommandLineParser = AppCommandLineParser.parser();
+        FusionCommandLineParser appCommandLineParser = FusionCommandLineParser.parser();
         try {
             appCommandLineParser.parseCommandLine(args);
         } catch (CommandLineParserError commandLineParserError) {

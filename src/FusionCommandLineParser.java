@@ -16,8 +16,8 @@ import java.util.Set;
 /**
  * Created by Dale on 20/07/16.
  */
-public final class AppCommandLineParser extends CommandLineParser<ICommand<Option>> {
-    private static final AppCommandLineParser parser = new AppCommandLineParser();
+public final class FusionCommandLineParser extends CommandLineParser<ICommand<Option>> {
+    private static final FusionCommandLineParser parser = new FusionCommandLineParser();
     private final HashMap<String, ICommand<Option>> commands = new HashMap<String, ICommand<Option>>() {
         {
             try {
@@ -34,10 +34,10 @@ public final class AppCommandLineParser extends CommandLineParser<ICommand<Optio
         commands.values().forEach(this::addCommand);
     }
 
-    private AppCommandLineParser() {
+    private FusionCommandLineParser() {
     }
 
-    public static final AppCommandLineParser parser() {
+    public static final FusionCommandLineParser parser() {
         return parser;
     }
 
