@@ -1,5 +1,7 @@
 package util;
 
+import com.sun.istack.internal.NotNull;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
@@ -76,7 +78,7 @@ public final class GlobalConstants {
         private OS() {
         }
 
-        public static boolean isOS(String name, String arch, String vers) {
+        public static boolean isOS(@NotNull String name, String arch, String vers) {
             Objects.requireNonNull(name);
 
             boolean isOS;
@@ -94,31 +96,31 @@ public final class GlobalConstants {
             return isOS;
         }
 
-        private static boolean osNameContains(String name) {
+        private static boolean osNameContains(@NotNull String name) {
             return OS_NAME.toLowerCase().contains(name.toLowerCase());
         }
 
-        public static boolean isOS(String name, String arch) {
+        public static boolean isOS(@NotNull String name, String arch) {
             return isOS(name, arch, null);
         }
 
-        public static boolean isOS(String name, int vers) {
+        public static boolean isOS(@NotNull String name, int vers) {
             return isOS(name, null, String.valueOf(vers));
         }
 
-        public static boolean isOS(OSFamily family, String arch) {
+        public static boolean isOS(@NotNull OSFamily family, String arch) {
             return isOS(family.family, arch, null);
         }
 
-        public static boolean isOS(OSFamily family) {
+        public static boolean isOS(@NotNull OSFamily family) {
             return isOS(family.family, null, null);
         }
 
-        public static boolean isOS(OSFamily family, int vers) {
+        public static boolean isOS(@NotNull OSFamily family, int vers) {
             return isOS(family.family, null, String.valueOf(vers));
         }
 
-        public static boolean isOS(OSFamily family, String arch, String vers) {
+        public static boolean isOS(@NotNull OSFamily family, String arch, String vers) {
             return isOS(family.family, arch, vers);
         }
 

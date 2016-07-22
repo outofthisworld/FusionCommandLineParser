@@ -15,33 +15,40 @@ public final class ProcessUtils {
 
     public static final String LOG_FILE = "/Log.html";
 
-    private ProcessUtils(){}
+    private ProcessUtils() {
+    }
 
-    public static final boolean executeCommand(String cmd, @Nullable String out) throws IOException {
+    public static final boolean executeCommand(String cmd, @Nullable String out, @Nullable Charset outputEncoding) throws IOException {
         Process process = Runtime.getRuntime().exec(cmd);
 
-        FileWriter bos = new FileWriter(AndroidSdkUtils.class.getResource(LOG_FILE).getPath());
+        BufferedOutputStream writer = null;
 
-        BufferedOutputStream writer = new BufferedOutputStream(process.getOutputStream());
+        boolean isOut = out!=null;
+
+        if (isOut)
+            writer = new BufferedOutputStream(process.getOutputStream());
 
         int data;
 
-        InputStream in = process.getInputStream();
+        try (
+                InputStream in = process.getInputStream();
+                FileWriter bos = new FileWriter(AndroidSdkUtils.class.getResource(LOG_FILE).getPath())
+        ) {
 
-        try {
             while ((data = in.read()) != -1) {
-                System.out.print((char)data);
+                System.out.print((char) data);
                 bos.write(data);
                 bos.flush();
-                if(out != null)
-                writer.write(out.getBytes(Charset.forName("UTF-8")));
-                writer.flush();
+
+                if (isOut) {
+                    writer.write(out.getBytes(outputEncoding));
+                    writer.flush();
+                }
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
-        }finally {
-            writer.close();
+
+            if(isOut)
+                writer.close();
+
             bos.flush();
             bos.close();
 
@@ -55,5 +62,4 @@ public final class ProcessUtils {
             return exitValue == 0;
         }
     }
-
 }

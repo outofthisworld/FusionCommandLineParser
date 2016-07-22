@@ -8,6 +8,7 @@ import static util.AndroidSdkUtils.tryLocateAndroidSDK;
  */
 public class AndroidEmulator {
     private final String androidSdkLocation;
+    private final String name;
 
 
     public AndroidEmulator(String sdkLocation) throws EmulatorException {
@@ -17,7 +18,7 @@ public class AndroidEmulator {
         this.androidSdkLocation = sdkLocation;
     }
 
-    public AndroidEmulator() throws EmulatorException {
+    public AndroidEmulator(String name,) throws EmulatorException {
         this.androidSdkLocation = tryLocateAndroidSDK();
     }
 
