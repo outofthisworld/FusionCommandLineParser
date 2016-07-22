@@ -10,16 +10,17 @@ public class AndroidEmulator {
     private final String androidSdkLocation;
     private final String name;
 
-
-    public AndroidEmulator(String sdkLocation) throws EmulatorException {
+    public AndroidEmulator(String name,String sdkLocation) throws EmulatorException {
         if(!isValidSdkLocation(sdkLocation)){
             throw new EmulatorException("Invalid SDK location");
         }
         this.androidSdkLocation = sdkLocation;
+        this.name = name;
     }
 
-    public AndroidEmulator(String name,) throws EmulatorException {
+    public AndroidEmulator(String name) throws EmulatorException {
         this.androidSdkLocation = tryLocateAndroidSDK();
+        this.name = name;
     }
 
     public void start(){

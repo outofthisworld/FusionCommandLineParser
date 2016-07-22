@@ -15,7 +15,7 @@ public class Test {
         System.out.println(Arrays.toString(GlobalConstants.separatedSystemPath()));
 
         try {
-            System.out.println(AndroidSdkUtils.createAVD("/Users/Dale/Library/Android/sdk","DalesAVD","7","default/x86"));
+            System.out.println(AndroidSdkUtils.createAVD("/Users/Dale/Library/Android/sdk","DalesEm","7","default/x86"));
         } catch (IOException e) {
             e.printStackTrace();
         }

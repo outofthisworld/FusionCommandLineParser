@@ -1,29 +1,30 @@
 package util;
 
+import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
-import java.io.BufferedOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 /**
  * Created by Dale on 22/07/16.
  */
 public final class ProcessUtils {
 
-    public static final String LOG_FILE = "/Log.html";
-
     private ProcessUtils() {
     }
 
-    public static final boolean executeCommand(String cmd, @Nullable String out, @Nullable Charset outputEncoding) throws IOException {
-        Process process = Runtime.getRuntime().exec(cmd);
+    public static final boolean executeCommand(@NotNull String cmd, @NotNull Writer inWriter, @Nullable String output,
+                                               @Nullable Charset outputEncoding) throws IOException {
 
+        Objects.requireNonNull(cmd);
+        Objects.requireNonNull(inWriter);
+
+        Process process = Runtime.getRuntime().exec(cmd);
         BufferedOutputStream writer = null;
 
-        boolean isOut = out!=null;
+        boolean isOut = output!=null;
 
         if (isOut)
             writer = new BufferedOutputStream(process.getOutputStream());
@@ -32,16 +33,16 @@ public final class ProcessUtils {
 
         try (
                 InputStream in = process.getInputStream();
-                FileWriter bos = new FileWriter(AndroidSdkUtils.class.getResource(LOG_FILE).getPath())
+                Writer cmdInWriter = new BufferedWriter(inWriter)
         ) {
 
             while ((data = in.read()) != -1) {
                 System.out.print((char) data);
-                bos.write(data);
-                bos.flush();
+                cmdInWriter.write(data);
+                cmdInWriter.flush();
 
                 if (isOut) {
-                    writer.write(out.getBytes(outputEncoding));
+                    writer.write(output.getBytes(outputEncoding));
                     writer.flush();
                 }
             }
@@ -49,8 +50,7 @@ public final class ProcessUtils {
             if(isOut)
                 writer.close();
 
-            bos.flush();
-            bos.close();
+            inWriter.close();
 
             int exitValue = process.exitValue();
 

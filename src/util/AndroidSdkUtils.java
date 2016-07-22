@@ -1,6 +1,8 @@
 package util;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,19 +16,27 @@ import static util.GlobalConstants.separatedSystemPath;
  * Created by Dale on 21/07/16.
  */
 public final class AndroidSdkUtils {
-    public static final String ANDROID_DIRECTORY  = "android";
-    public static final String SDK_DIR = "sdk";
-    public static final String ANDROID_PLATFORM_TOOLS_DIRECTORY = "platform-tools";
-    public static final String ANDROID_TOOLS_DIRECTORY = "tools";
-    public static final String EMULATOR_TOOL = "emulator";
-    public static final String ANDROID_TOOL = "android";
-    public static final String ADB_TOOL = "adb";
+    private static final String ANDROID_DIRECTORY  = "android";
+    private static final String SDK_DIR = "sdk";
+    private static final String ANDROID_PLATFORM_TOOLS_DIRECTORY = "platform-tools";
+    private static final String ANDROID_TOOLS_DIRECTORY = "tools";
+    private static final String EMULATOR_TOOL = "emulator";
+    private static final String ANDROID_TOOL = "android";
+    private static final String ADB_TOOL = "adb";
     public static final String ANDROID_SDK_ENV_VARIABLE = "ANDROID_SDK_DIR";
+    private static final Charset CMD_OUTPUT_ENCODING = Charset.forName("UTF-8");
 
+    private static final String CREATE_AVD = "create avd";
+    private static final String LIST_AVD = "list avd";
 
-    public static final String CREATE_AVD = "create avd";
 
     public static boolean createAVD(String sdkLocation, String name, String target, String abi) throws IOException {
+
+        String avdNameOption = " --name  ";
+        String avdTargetOption = " --target ";
+        String avdAbiOption = " --abi ";
+        String globalOption = " -s ";
+        String output = "no\n";
 
         StringBuilder commandBuilder = new StringBuilder();
         String command = commandBuilder.append(sdkLocation)
@@ -34,21 +44,23 @@ public final class AndroidSdkUtils {
                 .append(ANDROID_TOOLS_DIRECTORY)
                 .append(FILE_SEPARATOR)
                 .append(ANDROID_TOOL)
-                .append(" -s ")
+                .append(globalOption)
                 .append(CREATE_AVD)
-                .append(" --name ").append(name)
-                .append(" --target ").append(target)
-                .append(" --abi ").append(abi).toString();
-        return ProcessUtils.executeCommand(command,"no\n");
+                .append(avdNameOption).append(name)
+                .append(avdTargetOption).append(target)
+                .append(avdAbiOption).append(abi).toString();
+
+        System.out.println(command.toString());
+
+        return ProcessUtils.executeCommand(command, new StringWriter(), output, CMD_OUTPUT_ENCODING);
     }
 
-
-    public static void createAVD(String name, String target, String abi) throws Exception {
+    public static boolean tryCreateAVD(String name, String target, String abi) throws Exception {
         String androidSdkLocation;
         if((androidSdkLocation = tryLocateAndroidSDK()) == null)
             throw new Exception("Cannot locate android sdk to create android virtual device");
 
-        createAVD(androidSdkLocation,name,target,abi);
+        return createAVD(androidSdkLocation,name,target,abi);
     }
 
     public static boolean isValidSdkLocation(String path){
